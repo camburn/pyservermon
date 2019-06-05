@@ -28,3 +28,16 @@ Server-->Client: monitor_state_response
 Client->Server: monitor_update
 Note over Server: Add monitor record
 ```
+
+## Running Dev build
+
+```
+docker run --rm -it -p 3000:3000 \
+   --name=grafana \
+   -e "GF_SERVER_ROOT_URL=http://grafana.server.name" \
+   -e "GF_SECURITY_ADMIN_PASSWORD=secret" \
+   grafana/grafana
+docker run --name some-postgres -e POSTGRES_PASSWORD=secret --rm -it postgres
+docker run -it --rm postgres psql -h 172.17.0.3 -U postgres
+```
+grafana user is admin

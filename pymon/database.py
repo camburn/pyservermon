@@ -10,7 +10,8 @@ import pymon.settings
 db = Database()
 
 def bind():
-    db.bind('sqlite', 'pymon.db', create_db=True)
+    #db.bind('sqlite', 'pymon.db', create_db=True)
+    db.bind('postgres', user='postgres', password='mysecretpassword', host='127.0.0.1', database='pymon')
     db.generate_mapping(create_tables=True)
 
 
@@ -24,18 +25,20 @@ class Server(db.Entity):
 
 
 class Monitor(db.Entity):
-    id = PrimaryKey(int, auto=True)
     name = Required(str, unique=True)
+    datatype = Required(str)
     create_date = Required(datetime)
     update_date = Optional(datetime)
     server = Required(Server)
-    records = Set("Record")
+    records = Set('Record')
+    PrimaryKey(name, server)
 
 
 class Record(db.Entity):
     id = PrimaryKey(int, auto=True)
     monitor = Required(Monitor)
-    data = Required(str)
+    #server = Required(Server)
+    value = Required(float)
     create_date = Required(datetime)
 
 
