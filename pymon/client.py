@@ -6,11 +6,11 @@ import pymon.protocol as proto
 import pymon.messages as messages
 
 CLIENT_NAME = 'test-client'
-
+SERVER = '127.0.0.1:8050'
 
 def submit(message):
     response = requests.post(
-        'http://127.0.0.1:5000/submit',
+        f'http://{SERVER}/submit',
         data=message.dump(),
         headers={'Content-Type': 'application/json'}
     )
@@ -29,7 +29,7 @@ mons = messages.MonitorStateUpdate(
     destination='Server',
     monitors=[
         messages.MonitorState('cpu-usage', 'percent'),
-        messages.MonitorState('disk-free', 'GB'),
+        messages.MonitorState('disk-usage', 'percent'),
         messages.MonitorState('memory-usage', 'percent')
     ]
 )
@@ -45,6 +45,9 @@ while True:
 
     value = psutil.virtual_memory().percent
     update = messages.MonitorRecord(CLIENT_NAME, 'Server', 'memory-usage', value)
+    submit(update)
+    value = psutil.disk_usage('/').percent
+    update = messages.MonitorRecord(CLIENT_NAME, 'Server', 'disk-usage', value)
     submit(update)
     time.sleep(10)
 

@@ -2,7 +2,7 @@ import sqlite3
 from datetime import datetime
 
 from pony.orm import (PrimaryKey, Database, Required, Optional, Set,
-        db_session, select, ObjectNotFound
+        db_session, select, ObjectNotFound, desc
 )
 
 import pymon.settings

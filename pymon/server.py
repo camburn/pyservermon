@@ -3,13 +3,15 @@ import json
 import pymon.protocol as proto
 import pymon.messages as messages
 import pymon.database as db
+import pymon.dashboard as board
 
-
-app = Flask(__name__)
+app = board.get_app(__name__)
+#app = Flask(__name__)
 db.bind()
 
 @app.route('/')
 def server_home():
+    # Simple server display
     data = '<h1>PyMonitor</h1></b>'
     with db.db_session():
         for server in db.select(s for s in db.Server):
@@ -21,15 +23,17 @@ def server_home():
     return data
 
 
+def server_dash():
+    board.register(app)
+
+
 @app.route('/submit', methods=['POST'])
 def server_data():
     print('DATA', request.json)
     message = messages.Message.load(request.json)
-    #try:
+
     response = proto.handle(message)
-    #except Exception as err:
-    #    print('ERROR', err)
-    #    abort(500)
+
     if response is None:
         return '', 200
     return response.dump()
